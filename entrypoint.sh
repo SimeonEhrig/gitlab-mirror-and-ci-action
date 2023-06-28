@@ -32,6 +32,9 @@ else
   echo "Action triggered via push"
 fi
 
+echo "{GITHUB_REF} -> ${GITHUB_REF}"
+echo "{GITHUB_REF:11} -> ${GITHUB_REF:11}"
+
 git checkout "${GITHUB_REF:11}"
 
 branch="$(git symbolic-ref --short HEAD)"
