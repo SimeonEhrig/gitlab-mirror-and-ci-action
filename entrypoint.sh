@@ -28,6 +28,13 @@ then
   echo "Action triggered via pull request"
   echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
   echo "GITHUB_HEAD_REF -> ${GITHUB_HEAD_REF}"
+  
+  echo "GITHUB_REF_NAME -> ${GITHUB_REF_NAME}"
+  echo "GITHUB_REF_TYPE -> ${GITHUB_REF_TYPE}"
+  echo "GITHUB_SERVER_URL -> ${GITHUB_SERVER_URL}"
+  echo "GITHUB_REF_PROTECTED -> ${GITHUB_REF_PROTECTED}"
+  echo "GITHUB_PATH -> ${GITHUB_PATH}"
+  
   git checkout "${GITHUB_HEAD_REF}"
 else
   echo "Action triggered via push"
