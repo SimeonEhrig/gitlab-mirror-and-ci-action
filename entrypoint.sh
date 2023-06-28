@@ -21,6 +21,15 @@ urlencode() (
 DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
 
+if [ -n "${GITHUB_BASE_REF}" ]
+then
+  echo "Action triggered via pull request"
+  echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
+  echo "GITHUB_HEAD_REF -> ${GITHUB_HEAD_REF}"
+else
+  echo "Action triggered via push"
+fi
+
 git checkout "${GITHUB_REF:11}"
 
 branch="$(git symbolic-ref --short HEAD)"
