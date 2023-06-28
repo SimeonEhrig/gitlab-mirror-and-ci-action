@@ -21,6 +21,8 @@ urlencode() (
 DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
 
+git status
+
 if [ -n "${GITHUB_BASE_REF}" ]
 then
   echo "Action triggered via pull request"
