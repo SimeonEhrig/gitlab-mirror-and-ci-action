@@ -28,14 +28,14 @@ then
   echo "Action triggered via pull request"
   echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
   echo "GITHUB_HEAD_REF -> ${GITHUB_HEAD_REF}"
+  git checkout "${GITHUB_HEAD_REF}"
 else
   echo "Action triggered via push"
+  git checkout "${GITHUB_REF:11}"
 fi
 
 echo "{GITHUB_REF} -> ${GITHUB_REF}"
 echo "{GITHUB_REF:11} -> ${GITHUB_REF:11}"
-
-git checkout "${GITHUB_REF:11}"
 
 branch="$(git symbolic-ref --short HEAD)"
 branch_uri="$(urlencode ${branch})"
