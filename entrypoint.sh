@@ -25,6 +25,16 @@ echo "$(git status)"
 
 if [ -n "${GITHUB_BASE_REF}" ]
 then
+  # get pull request information
+
+  curl --request GET --url "https://api.github.com/repos/SimeonEhrig/test-trigger-gitlab/pulls/6" --header "Accept: application/vnd.github+json" > rq.json
+  echo "HEAD repository: $(cat rq.json | jq .head.repo.full_name)"
+  echo "HEAD branch: $(cat rq.json | jq .head.ref)"
+
+  splitted_github_ref=(${GITHUB_REF//// })
+  pr_id=${splitted_github_ref[2]}
+  echo "URL: ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls/${pr_id}"
+
   echo "Action triggered via pull request"
   echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
   echo "GITHUB_HEAD_REF -> ${GITHUB_HEAD_REF}"
