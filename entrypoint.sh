@@ -36,14 +36,17 @@ then
   pr_api_url=${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls/${pr_id}
 
   curl --request GET --url "${pr_api_url}" --header "Accept: application/vnd.github+json" > pr.json
-  head_clone_url=$(cat pr.json | jq .head.repo.clone_url)
-  head_branch=$(cat pr.json | jq .head.ref)
+  head_clone_url=$(cat pr.json | jq -r .head.repo.clone_url)
+  head_branch=$(cat pr.json | jq -r .head.ref)
   echo "HEAD url: $head_clone_url"
   echo "HEAD branch: $head_branch"
 
   git remote add head_repo $head_clone_url
   git fetch head_repo
+  # checkout remote branch
   git checkout head_repo/$head_branch
+  # set remote branch as local branch
+  git checkout $head_branch
 
   # echo "Action triggered via pull request"
   # echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
