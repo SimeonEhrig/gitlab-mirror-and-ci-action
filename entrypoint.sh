@@ -27,25 +27,35 @@ if [ -n "${GITHUB_BASE_REF}" ]
 then
   # get pull request information
 
-  curl --request GET --url "https://api.github.com/repos/SimeonEhrig/test-trigger-gitlab/pulls/6" --header "Accept: application/vnd.github+json" > rq.json
-  echo "HEAD repository: $(cat rq.json | jq .head.repo.full_name)"
-  echo "HEAD branch: $(cat rq.json | jq .head.ref)"
-
+  # the GITHUB_REF has the shape of refs/pull/<pr_number>/merge
+  # split the variable by `/` and store the result as list
   splitted_github_ref=(${GITHUB_REF//// })
+  # the PR number is stored on the 3rd position
   pr_id=${splitted_github_ref[2]}
-  echo "URL: ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls/${pr_id}"
+  # compile the url for the api call to get the meta from the pull request
+  pr_api_url=${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls/${pr_id}
 
-  echo "Action triggered via pull request"
-  echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
-  echo "GITHUB_HEAD_REF -> ${GITHUB_HEAD_REF}"
+  curl --request GET --url "${pr_api_url}" --header "Accept: application/vnd.github+json" > pr.json
+  head_clone_url=$(cat pr.json | jq .head.repo.clone_url)
+  head_branch=$(cat pr.json | jq .head.ref)
+  echo "HEAD url: $head_clone_url"
+  echo "HEAD branch: $head_branch"
+
+  git remote add head_repo $head_clone_url
+  git fetch head_repo
+  git checkout head_repo/$head_branch
+
+  # echo "Action triggered via pull request"
+  # echo "GITHUB_BASE_REF -> ${GITHUB_BASE_REF}"
+  # echo "GITHUB_HEAD_REF -> ${GITHUB_HEAD_REF}"
   
-  echo "GITHUB_REF_NAME -> ${GITHUB_REF_NAME}"
-  echo "GITHUB_REF_TYPE -> ${GITHUB_REF_TYPE}"
-  echo "GITHUB_SERVER_URL -> ${GITHUB_SERVER_URL}"
-  echo "GITHUB_REF_PROTECTED -> ${GITHUB_REF_PROTECTED}"
-  echo "GITHUB_PATH -> ${GITHUB_PATH}"
+  # echo "GITHUB_REF_NAME -> ${GITHUB_REF_NAME}"
+  # echo "GITHUB_REF_TYPE -> ${GITHUB_REF_TYPE}"
+  # echo "GITHUB_SERVER_URL -> ${GITHUB_SERVER_URL}"
+  # echo "GITHUB_REF_PROTECTED -> ${GITHUB_REF_PROTECTED}"
+  # echo "GITHUB_PATH -> ${GITHUB_PATH}"
   
-  git checkout "${GITHUB_HEAD_REF}"
+  # git checkout "${GITHUB_HEAD_REF}"
 else
   echo "Action triggered via push"
   git checkout "${GITHUB_REF:11}"
